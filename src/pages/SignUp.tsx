@@ -1,6 +1,6 @@
 import { Form, Input, Button } from "antd";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { loggedInUser } from "../redux/features/user/userSlice";
+import { createUser } from "../redux/features/user/userSlice";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
@@ -14,21 +14,19 @@ interface ICredential {
   password: string;
 }
 
-export default function Login() {
+export default function SignUp() {
   const backgroundImage =
     "https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2952&q=80";
   const dispatch = useAppDispatch();
   const { user, isLoading } = useAppSelector((state) => state.user);
   const navigate = useNavigate();
-
   const onFinish = (values: ICredential) => {
-    console.log("Received values:", values);
     const { email, password } = values;
-    dispatch(loggedInUser({ email, password }));
+    dispatch(createUser({ email, password }));
   };
 
   if (user.email && !isLoading) {
-    navigate("/");
+    navigate("/login");
   }
 
   return (
@@ -64,19 +62,21 @@ export default function Login() {
           boxShadow: "0 0 10px rgba(0, 0, 0, 0.3)",
         }}
       >
-        <h2>Login to explore</h2>
+        <h2>Create an account</h2>
         <Form
-          name="login-form"
+          name="sign-up-form"
           onFinish={onFinish}
-          initialValues={{ remember: true }}
+          initialValues={{
+            remember: true,
+          }}
         >
           <Form.Item
             name="email"
             rules={[
               {
-                type: "email",
                 required: true,
-                message: "Please enter a valid email!",
+                message: "Please enter your email!",
+                type: "email",
               },
             ]}
           >
@@ -86,7 +86,6 @@ export default function Login() {
               style={{ background: "transparent" }}
             />
           </Form.Item>
-
           <Form.Item
             name="password"
             rules={[
@@ -97,12 +96,11 @@ export default function Login() {
             ]}
           >
             <TransparentPasswordInput
-              size="large"
               placeholder="Password"
               style={{ background: "transparent" }}
+              size="large"
             />
           </Form.Item>
-
           <Form.Item>
             <Button
               type="primary"
@@ -115,12 +113,12 @@ export default function Login() {
                 color: "#333333",
               }}
             >
-              <strong>Log in</strong>
+              <strong>Sign Up</strong>
             </Button>
           </Form.Item>
         </Form>
         <p style={{ textAlign: "center" }}>
-          Don't have an account? <Link to="/sign-up">Sign Up</Link>
+          Already have an account? <Link to="/login">Log in</Link>
         </p>
       </div>
     </div>

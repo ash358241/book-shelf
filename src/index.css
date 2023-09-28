@@ -1,3 +1,8 @@
+body {
+  display: initial; /* Reset the display property to its initial value */
+  margin: 0; /* Reset the margin to remove the 8px margin */
+  /* Add any other styles you want for the body element */
+}
 /* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
