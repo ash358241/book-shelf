@@ -1,6 +1,7 @@
 import { Form, Input, Button } from "antd";
-import { useAppDispatch } from "../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { createUser } from "../redux/features/user/userSlice";
+import { useNavigate } from "react-router-dom";
 
 interface ICredential {
   email: string;
@@ -9,12 +10,16 @@ interface ICredential {
 
 export default function SignUp() {
   const dispatch = useAppDispatch();
+  const { user, isLoading } = useAppSelector((state) => state.user);
+  const navigate = useNavigate();
   const onFinish = (values: ICredential) => {
-    console.log("Received values:", values);
     const { email, password } = values;
-    console.log(email);
     dispatch(createUser({ email, password }));
   };
+
+  if (user && !isLoading) {
+    navigate("/login");
+  }
 
   return (
     <div style={{ maxWidth: "400px", margin: "0 auto", padding: "20px" }}>
