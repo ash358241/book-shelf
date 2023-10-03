@@ -1,9 +1,18 @@
-import React, { useState } from "react";
-import { Form, Input, Button, DatePicker, Row, Col, Upload } from "antd";
+import { useState } from "react";
+import {
+  Form,
+  Input,
+  Button,
+  DatePicker,
+  Row,
+  Col,
+  Upload,
+  message,
+} from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import "../styles/AddBook.css";
 import type { RcFile, UploadFile, UploadProps } from "antd/es/upload/interface";
-import { useAddBookMutation } from "../redux/api/apiSlice";
+import { useAddBookMutation } from "../redux/features/books/bookAPI";
 
 interface BookFormValues {
   title: string;
@@ -16,10 +25,7 @@ interface BookFormValues {
 const AddBook = () => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
-  console.log("🚀 AddBook-10-> fileList =>", fileList);
-
-  const [addBook, { isError, isLoading, error }] = useAddBookMutation();
-  console.log("🚀 AddBook-13-> error =>", error);
+  const [addBook, { isLoading }] = useAddBookMutation();
 
   const onFinish = async (values: BookFormValues) => {
     try {
@@ -33,10 +39,11 @@ const AddBook = () => {
         formData.append("image", fileList[0].originFileObj as File);
       }
       await addBook(formData);
+      message.success("Book submitted successfully");
       form.resetFields();
       setFileList([]);
     } catch (error) {
-      console.error("Error adding book:", error);
+      message.error("Something went wrong");
     }
   };
 
