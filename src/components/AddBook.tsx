@@ -3,19 +3,41 @@ import { Form, Input, Button, DatePicker, Row, Col, Upload } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import "../styles/AddBook.css";
 import type { RcFile, UploadFile, UploadProps } from "antd/es/upload/interface";
+import { useAddBookMutation } from "../redux/api/apiSlice";
+
+interface BookFormValues {
+  title: string;
+  author: string;
+  genre: string;
+  publicationDate: { toISOString: () => string | Blob };
+  image: File | null;
+}
+
 const AddBook = () => {
   const [form] = Form.useForm();
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+  console.log("🚀 AddBook-10-> fileList =>", fileList);
 
-  const onFinish = (values: unknown) => {
-    setIsSubmitting(true);
-    // Simulate an API request to add the book
-    setTimeout(() => {
-      console.log("Book added:", values);
-      setIsSubmitting(false);
+  const [addBook, { isError, isLoading, error }] = useAddBookMutation();
+  console.log("🚀 AddBook-13-> error =>", error);
+
+  const onFinish = async (values: BookFormValues) => {
+    try {
+      const formData = new FormData();
+      formData.append("title", values.title);
+      formData.append("author", values.author);
+      formData.append("genre", values.genre);
+      formData.append("publicationDate", values.publicationDate.toISOString());
+
+      if (fileList.length > 0) {
+        formData.append("image", fileList[0].originFileObj as File);
+      }
+      await addBook(formData);
       form.resetFields();
-    }, 1000);
+      setFileList([]);
+    } catch (error) {
+      console.error("Error adding book:", error);
+    }
   };
 
   const onChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
@@ -104,7 +126,6 @@ const AddBook = () => {
               rules={[
                 {
                   required: true,
-                  type: "object",
                   message: "Please select a publication date",
                 },
               ]}
@@ -121,17 +142,17 @@ const AddBook = () => {
               rules={[
                 {
                   required: true,
-                  type: "object",
                   message: "Please enter the book's image",
                 },
               ]}
             >
               <Upload
-                action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+                action="http://localhost:8000/books"
                 listType="picture-card"
                 fileList={fileList}
                 onChange={onChange}
                 onPreview={onPreview}
+                beforeUpload={() => false}
               >
                 {fileList.length < 5 && "+ Upload"}
               </Upload>
@@ -144,7 +165,7 @@ const AddBook = () => {
             size="large"
             htmlType="submit"
             icon={<PlusOutlined />}
-            loading={isSubmitting}
+            loading={isLoading}
             className="add-book-button"
           >
             Add Book
