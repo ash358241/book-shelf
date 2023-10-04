@@ -154,7 +154,7 @@ const AddBook = () => {
               ]}
             >
               <Upload
-                action="http://localhost:8000/books"
+                action="http://localhost:8000/addBook"
                 listType="picture-card"
                 fileList={fileList}
                 onChange={onChange}
