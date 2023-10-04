@@ -46,7 +46,9 @@ export default function ShowAllBooks({ data, isLoading }) {
               <div style={{ marginBottom: "10px" }}>
                 <Space align="baseline">
                   <UserOutlined style={{ fontSize: "18px", color: "blue" }} />
-                  <Text>{author}</Text>
+                  <Text>
+                    <strong>Author:</strong> {author}
+                  </Text>
                 </Space>
               </div>
               <div style={{ marginBottom: "10px" }}>

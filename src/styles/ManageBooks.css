@@ -1,0 +1,10 @@
+/* ManageBook.css */
+.list-item {
+  padding: 16px; /* Add vertical padding to create space */
+  transition: background-color 0.3s; /* Add a transition for hover effect */
+
+  /* Optional: If you want to change the background color on hover */
+  &:hover {
+    background-color: #f0f0f0; /* Change to your desired hover color */
+  }
+}
