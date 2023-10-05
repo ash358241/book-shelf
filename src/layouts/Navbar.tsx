@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Layout, Menu } from "antd";
 import {
   HomeOutlined,
@@ -9,7 +9,7 @@ import {
   DashboardOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../lib/firebase";
@@ -32,6 +32,8 @@ const StyledHeader = styled(Header)`
 const AppNavbar: React.FC = () => {
   const { user } = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
+  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
+  const location = useLocation();
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -41,7 +43,20 @@ const AppNavbar: React.FC = () => {
         console.log("Null user");
       }
     });
-  }, [dispatch]);
+
+    const path = location.pathname;
+    if (path === "/") {
+      setSelectedKeys(["1"]);
+    } else if (path === "/all-books") {
+      setSelectedKeys(["2"]);
+    } else if (path === "/checkout") {
+      setSelectedKeys(["3"]);
+    } else if (path === "/dashboard") {
+      setSelectedKeys(["4-1"]);
+    } else if (path === "/login") {
+      setSelectedKeys(["4-2"]);
+    }
+  }, [dispatch, location.pathname]);
 
   const handleLogout = () => {
     signOut(auth)
@@ -56,7 +71,12 @@ const AppNavbar: React.FC = () => {
   return (
     <StyledHeader>
       <h2 style={{ color: "#ffffff" }}>BookShelf</h2>
-      <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["1"]}>
+      <Menu
+        theme="dark"
+        mode="horizontal"
+        defaultSelectedKeys={["1"]}
+        selectedKeys={selectedKeys}
+      >
         <Menu.Item key="1" icon={<HomeOutlined />}>
           <Link to="/">Home</Link>
         </Menu.Item>

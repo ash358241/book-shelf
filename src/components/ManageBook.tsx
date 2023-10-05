@@ -1,4 +1,4 @@
-import { message } from "antd"; // Import Ant Design message component
+import { Tooltip, message } from "antd"; // Import Ant Design message component
 import {
   useDeleteBookMutation,
   useGetBooksQuery,
@@ -40,13 +40,17 @@ export default function ManageBook() {
               description={`Author: ${book.author}`}
             />
             <Space>
-              <Button
-                type="danger"
-                icon={<DeleteOutlined />}
-                onClick={() => handleDeleteBook(book._id)}
-              >
-                Delete
-              </Button>
+              <Tooltip title="Delete Book">
+                <Button
+                  type="link"
+                  icon={
+                    <DeleteOutlined
+                      style={{ fontSize: "18px", color: "red" }}
+                    />
+                  }
+                  onClick={() => handleDeleteBook(book._id)}
+                />
+              </Tooltip>
             </Space>
           </List.Item>
         )}
