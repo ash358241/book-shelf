@@ -55,6 +55,8 @@ const AppNavbar: React.FC = () => {
       setSelectedKeys(["4-1"]);
     } else if (path === "/login") {
       setSelectedKeys(["4-2"]);
+    } else {
+      setSelectedKeys([]);
     }
   }, [dispatch, location.pathname]);
 

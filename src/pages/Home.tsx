@@ -1,19 +1,49 @@
-import { Card, Col, Image, Row, Skeleton, Space, Typography } from "antd";
+import { Card, Col, Image, Row, Skeleton, Space, Spin, Typography } from "antd";
 import {
   UserOutlined,
   BookOutlined,
   CalendarOutlined,
 } from "@ant-design/icons";
+import { format } from "date-fns";
 import { useGetBooksQuery } from "../redux/features/books/bookAPI";
 import AppFooter from "../layouts/Footer";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
 
 const { Text, Title } = Typography;
+
+const LoaderContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+`;
+
+const SeeMoreLink = styled.p`
+  color: #1890ff;
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 0;
+  transition: color 0.3s;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  span {
+    margin-left: 4px;
+  }
+`;
 
 export default function Home() {
   const { data, isLoading } = useGetBooksQuery(undefined);
 
   if (!data || isLoading) {
-    return <Skeleton active avatar />;
+    return (
+      <LoaderContainer>
+        <Spin size="large" />
+      </LoaderContainer>
+    );
   }
 
   const sortedData = [...data].sort((a, b) => {
@@ -52,50 +82,63 @@ export default function Home() {
                 )
               }
             >
-              <Skeleton loading={isLoading} avatar active>
-                <Card.Meta
-                  title={book.title}
-                  description={
-                    <div style={{ marginTop: "20px" }}>
-                      <div style={{ marginBottom: "10px" }}>
-                        <Space align="baseline">
-                          <UserOutlined
-                            style={{ fontSize: "18px", color: "blue" }}
-                          />
-                          <Text>
-                            <strong>Author:</strong> {book.author}
-                          </Text>
-                        </Space>
+              <Link to={`/book/${book._id}`}>
+                <Skeleton loading={isLoading} avatar active>
+                  <Card.Meta
+                    title={book.title}
+                    description={
+                      <div style={{ marginTop: "20px" }}>
+                        <div style={{ marginBottom: "10px" }}>
+                          <Space align="baseline">
+                            <UserOutlined
+                              style={{ fontSize: "18px", color: "blue" }}
+                            />
+                            <Text>
+                              <strong>Author:</strong> {book.author}
+                            </Text>
+                          </Space>
+                        </div>
+                        <div style={{ marginBottom: "10px" }}>
+                          <Space align="baseline">
+                            <BookOutlined
+                              style={{ fontSize: "18px", color: "green" }}
+                            />
+                            <Text>
+                              <strong>Genre:</strong> {book.genre}
+                            </Text>
+                          </Space>
+                        </div>
+                        <div style={{ marginBottom: "10px" }}>
+                          <Space align="baseline">
+                            <CalendarOutlined
+                              style={{ fontSize: "18px", color: "red" }}
+                            />
+                            <Text>
+                              <strong>Publication Date:</strong>{" "}
+                              {format(
+                                new Date(book.publicationDate),
+                                "dd MMM, yyyy"
+                              )}
+                            </Text>
+                          </Space>
+                        </div>
                       </div>
-                      <div style={{ marginBottom: "10px" }}>
-                        <Space align="baseline">
-                          <BookOutlined
-                            style={{ fontSize: "18px", color: "green" }}
-                          />
-                          <Text>
-                            <strong>Genre:</strong> {book.genre}
-                          </Text>
-                        </Space>
-                      </div>
-                      <div style={{ marginBottom: "10px" }}>
-                        <Space align="baseline">
-                          <CalendarOutlined
-                            style={{ fontSize: "18px", color: "red" }}
-                          />
-                          <Text>
-                            <strong>Publication Date:</strong>{" "}
-                            {book.publicationDate}
-                          </Text>
-                        </Space>
-                      </div>
-                    </div>
-                  }
-                />
-              </Skeleton>
+                    }
+                  />
+                </Skeleton>
+              </Link>
             </Card>
           </Col>
         ))}
       </Row>
+      <Link
+        to="/all-books"
+        style={{ textAlign: "right", textDecoration: "none" }}
+      >
+        <SeeMoreLink>
+          See more books <span style={{ marginLeft: "4px" }}>&rarr;</span>
+        </SeeMoreLink>
+      </Link>
       <br />
       <AppFooter />
     </div>
