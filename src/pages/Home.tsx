@@ -9,6 +9,7 @@ import { useGetBooksQuery } from "../redux/features/books/bookAPI";
 import AppFooter from "../layouts/Footer";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import Banner from "../components/Banner";
 
 const { Text, Title } = Typography;
 
@@ -55,6 +56,7 @@ export default function Home() {
 
   return (
     <div style={{ padding: "20px" }}>
+      <Banner />
       <Title style={{ color: "#1890ff", textAlign: "center" }}>
         Latest Books
       </Title>
