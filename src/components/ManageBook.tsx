@@ -4,7 +4,8 @@ import {
   useGetBooksQuery,
 } from "../redux/features/books/bookAPI";
 import { List, Button, Space } from "antd";
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { Link } from "react-router-dom";
 
 export default function ManageBook() {
   const { data } = useGetBooksQuery(undefined);
@@ -39,6 +40,20 @@ export default function ManageBook() {
               title={book.title}
               description={`Author: ${book.author}`}
             />
+            <Space>
+              <Tooltip title="Update Book">
+                <Link to={`/editBook/${book._id}`}>
+                  <Button
+                    type="link"
+                    icon={
+                      <EditOutlined
+                        style={{ fontSize: "18px", color: "blue" }}
+                      />
+                    }
+                  />
+                </Link>
+              </Tooltip>
+            </Space>
             <Space>
               <Tooltip title="Delete Book">
                 <Button
