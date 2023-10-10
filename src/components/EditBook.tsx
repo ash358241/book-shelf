@@ -37,7 +37,7 @@ export default function EditBook() {
     }
   }, [book, form]);
 
-  const onFinish = async (values) => {
+  const onFinish = async (values: unknown) => {
     try {
       await updateBook({ bookId: id, updatedBookData: values }).unwrap();
       message.success("Book successfully updated");

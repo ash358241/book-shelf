@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -10,10 +10,16 @@ import AddBook from "./AddBook";
 import ManageBook from "./ManageBook";
 import Welcome from "./Welcome";
 import { Link } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../lib/firebase";
+import { setUser } from "../redux/features/user/userSlice";
 
 const { Header, Sider, Content } = Layout;
 
 const App: React.FC = () => {
+  const { user } = useAppSelector((state) => state.user);
+  const dispatch = useAppDispatch();
   const [collapsed, setCollapsed] = useState(false);
   const [selectedMenuItem, setSelectedMenuItem] = useState("1");
   const {
@@ -40,15 +46,25 @@ const App: React.FC = () => {
 
   switch (selectedMenuItem) {
     case "1":
-      contentComponent = <AddBook />;
+      contentComponent = <AddBook user={user} />;
       break;
     case "2":
-      contentComponent = <ManageBook />;
+      contentComponent = <ManageBook user={user} />;
       break;
     default:
       contentComponent = <Welcome />;
       break;
   }
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        dispatch(setUser(user.email));
+      } else {
+        console.log("Null user");
+      }
+    });
+  }, [dispatch]);
 
   return (
     <Layout style={{ minHeight: "100vh" }}>

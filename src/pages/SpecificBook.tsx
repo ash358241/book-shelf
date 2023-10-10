@@ -36,10 +36,10 @@ const FeedBackContainer = styled.div`
 
 export default function SpecificBook() {
   const [postComment] = usePostCommentMutation();
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const { data: book, isLoading, isError } = useGetBookByIdQuery(id);
 
-  const [feedback, setFeedback] = useState("");
+  const [feedback, setFeedback] = useState<string>("");
 
   const handleCommentSubmit = async () => {
     try {
@@ -126,7 +126,11 @@ const FeedbackMessage = styled.div`
   border-radius: 8px;
 `;
 
-const FeedbackDisplay = ({ feedbackList }) => {
+interface FeedbackDisplayProps {
+  feedbackList: { feedback: string }[] | undefined;
+}
+
+const FeedbackDisplay: React.FC<FeedbackDisplayProps> = ({ feedbackList }) => {
   return (
     <FeedbackContainer>
       {feedbackList?.map((feedback, index) => (

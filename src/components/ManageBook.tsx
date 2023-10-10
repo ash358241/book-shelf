@@ -1,4 +1,4 @@
-import { Tooltip, message } from "antd"; // Import Ant Design message component
+import { Tooltip, message } from "antd";
 import {
   useDeleteBookMutation,
   useGetBooksQuery,
@@ -7,15 +7,26 @@ import { List, Button, Space } from "antd";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 
-export default function ManageBook() {
+interface IUser {
+  user: {
+    email: string | null;
+  };
+}
+
+interface IBook {
+  _id: string;
+  title: string;
+  author: string;
+  userEmail: string;
+}
+
+export default function ManageBook({ user }: IUser) {
   const { data } = useGetBooksQuery(undefined);
   const [deleteBook] = useDeleteBookMutation();
 
-  const handleDeleteBook = async (bookId) => {
+  const handleDeleteBook = async (bookId: string) => {
     try {
       const result = await deleteBook(bookId).unwrap();
-      console.log("🚀 ManageBook-16-> result =>", result);
-
       if (result) {
         message.success(`${result.message}`);
       } else {
@@ -26,7 +37,7 @@ export default function ManageBook() {
     }
   };
 
-  const bookList = data || [];
+  const bookList: IBook[] = data || [];
 
   return (
     <div style={{ backgroundColor: "#f7f7f7", padding: "24px" }}>
@@ -34,20 +45,33 @@ export default function ManageBook() {
       <List
         itemLayout="horizontal"
         dataSource={bookList}
-        renderItem={(book) => (
+        renderItem={(book: IBook) => (
           <List.Item>
             <List.Item.Meta
               title={book.title}
               description={`Author: ${book.author}`}
             />
             <Space>
-              <Tooltip title="Update Book">
+              <Tooltip
+                title={
+                  book.userEmail !== user?.email
+                    ? "You can only update your own books"
+                    : "Update Book"
+                }
+              >
                 <Link to={`/editBook/${book._id}`}>
                   <Button
                     type="link"
+                    disabled={book.userEmail !== user?.email}
                     icon={
                       <EditOutlined
-                        style={{ fontSize: "18px", color: "blue" }}
+                        style={{
+                          fontSize: "18px",
+                          color:
+                            book.userEmail === user?.email ? "blue" : "gray",
+                          pointerEvents:
+                            book.userEmail === user?.email ? "none" : "auto",
+                        }}
                       />
                     }
                   />
@@ -55,12 +79,24 @@ export default function ManageBook() {
               </Tooltip>
             </Space>
             <Space>
-              <Tooltip title="Delete Book">
+              <Tooltip
+                title={
+                  book.userEmail !== user?.email
+                    ? "You can only delete your own books"
+                    : "Delete Book"
+                }
+              >
                 <Button
                   type="link"
+                  disabled={book.userEmail !== user?.email}
                   icon={
                     <DeleteOutlined
-                      style={{ fontSize: "18px", color: "red" }}
+                      style={{
+                        fontSize: "18px",
+                        color: book.userEmail === user?.email ? "red" : "gray",
+                        pointerEvents:
+                          book.userEmail === user?.email ? "none" : "auto",
+                      }}
                     />
                   }
                   onClick={() => handleDeleteBook(book._id)}

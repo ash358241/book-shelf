@@ -3,9 +3,7 @@ import { Layout, Menu } from "antd";
 import {
   HomeOutlined,
   BookOutlined,
-  ShoppingCartOutlined,
   LoginOutlined,
-  UserOutlined,
   DashboardOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
@@ -17,7 +15,6 @@ import { setUser } from "../redux/features/user/userSlice";
 import styled from "styled-components";
 
 const { Header } = Layout;
-const { SubMenu } = Menu;
 
 const StyledHeader = styled(Header)`
   position: sticky;
@@ -85,29 +82,24 @@ const AppNavbar: React.FC = () => {
         <Menu.Item key="2" icon={<BookOutlined />}>
           <Link to="all-books">All Books</Link>
         </Menu.Item>
-        <Menu.Item key="3" icon={<ShoppingCartOutlined />}>
-          <Link to="/checkout">Checkout</Link>
-        </Menu.Item>
-        <SubMenu key="4" icon={<UserOutlined />} title="Account">
-          {user.email ? (
-            <>
-              <Menu.Item key="4-1" icon={<DashboardOutlined />}>
-                <Link to="/dashboard">Dashboard</Link>
-              </Menu.Item>
-              <Menu.Item
-                key="4-2"
-                icon={<LogoutOutlined />}
-                onClick={handleLogout}
-              >
-                Logout
-              </Menu.Item>
-            </>
-          ) : (
-            <Menu.Item key="4-2" icon={<LoginOutlined />}>
-              <Link to="/login">Login</Link>
+        {user.email ? (
+          <>
+            <Menu.Item key="4-1" icon={<DashboardOutlined />}>
+              <Link to="/dashboard">Dashboard</Link>
             </Menu.Item>
-          )}
-        </SubMenu>
+            <Menu.Item
+              key="4-2"
+              icon={<LogoutOutlined />}
+              onClick={handleLogout}
+            >
+              Logout
+            </Menu.Item>
+          </>
+        ) : (
+          <Menu.Item key="4-2" icon={<LoginOutlined />}>
+            <Link to="/login">Login</Link>
+          </Menu.Item>
+        )}
       </Menu>
     </StyledHeader>
   );

@@ -21,8 +21,13 @@ interface BookFormValues {
   publicationDate: { toISOString: () => string | Blob };
   image: File | null;
 }
+interface IUser {
+  user: {
+    email: string | null;
+  };
+}
 
-const AddBook = () => {
+const AddBook = ({ user }: IUser) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [addBook, { isLoading }] = useAddBookMutation();
@@ -38,6 +43,11 @@ const AddBook = () => {
       if (fileList.length > 0) {
         formData.append("image", fileList[0].originFileObj as File);
       }
+
+      if (user?.email) {
+        formData.append("userEmail", user.email);
+      }
+
       await addBook(formData);
       message.success("Book submitted successfully");
       form.resetFields();
