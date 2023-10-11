@@ -6,6 +6,7 @@ import {
 import { List, Button, Space } from "antd";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 interface IUser {
   user: {
@@ -21,8 +22,15 @@ interface IBook {
 }
 
 export default function ManageBook({ user }: IUser) {
+  const [isAdmin, setIsAdmin] = useState(false);
   const { data } = useGetBooksQuery(undefined);
   const [deleteBook] = useDeleteBookMutation();
+
+  useEffect(() => {
+    if (user?.email === "ashrafunit7@gmail.com") {
+      setIsAdmin(true);
+    }
+  }, [user?.email]);
 
   const handleDeleteBook = async (bookId: string) => {
     try {
@@ -54,7 +62,7 @@ export default function ManageBook({ user }: IUser) {
             <Space>
               <Tooltip
                 title={
-                  book.userEmail !== user?.email
+                  book.userEmail !== user?.email && !isAdmin
                     ? "You can only update your own books"
                     : "Update Book"
                 }
@@ -62,15 +70,19 @@ export default function ManageBook({ user }: IUser) {
                 <Link to={`/editBook/${book._id}`}>
                   <Button
                     type="link"
-                    disabled={book.userEmail !== user?.email}
+                    disabled={book.userEmail !== user?.email && !isAdmin}
                     icon={
                       <EditOutlined
                         style={{
                           fontSize: "18px",
                           color:
-                            book.userEmail === user?.email ? "blue" : "gray",
+                            book.userEmail === user?.email || isAdmin
+                              ? "blue"
+                              : "gray",
                           pointerEvents:
-                            book.userEmail === user?.email ? "none" : "auto",
+                            book.userEmail === user?.email || isAdmin
+                              ? "none"
+                              : "auto",
                         }}
                       />
                     }
@@ -81,21 +93,26 @@ export default function ManageBook({ user }: IUser) {
             <Space>
               <Tooltip
                 title={
-                  book.userEmail !== user?.email
+                  book.userEmail !== user?.email && !isAdmin
                     ? "You can only delete your own books"
                     : "Delete Book"
                 }
               >
                 <Button
                   type="link"
-                  disabled={book.userEmail !== user?.email}
+                  disabled={book.userEmail !== user?.email && !isAdmin}
                   icon={
                     <DeleteOutlined
                       style={{
                         fontSize: "18px",
-                        color: book.userEmail === user?.email ? "red" : "gray",
+                        color:
+                          book.userEmail === user?.email || isAdmin
+                            ? "red"
+                            : "gray",
                         pointerEvents:
-                          book.userEmail === user?.email ? "none" : "auto",
+                          book.userEmail === user?.email || isAdmin
+                            ? "none"
+                            : "auto",
                       }}
                     />
                   }
