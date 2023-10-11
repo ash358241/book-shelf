@@ -1,8 +1,9 @@
 import { Form, Input, Button } from "antd";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { createUser } from "../redux/features/user/userSlice";
+import { createUser, signInWithGoogle } from "../redux/features/user/userSlice";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { FcGoogle } from "react-icons/fc";
 
 const TransparentPasswordInput = styled(Input.Password)`
   &&& .ant-input {
@@ -23,6 +24,20 @@ export default function SignUp() {
   const onFinish = (values: ICredential) => {
     const { email, password } = values;
     dispatch(createUser({ email, password }));
+  };
+
+  const signUpWithGoogleButtonStyle = {
+    width: "100%",
+    borderRadius: "5px",
+    background: "rgba(0, 0, 0, 0.1)",
+    color: "#333333",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  };
+
+  const handleGoogleSignIn = () => {
+    dispatch(signInWithGoogle());
   };
 
   if (user.email && !isLoading) {
@@ -114,6 +129,16 @@ export default function SignUp() {
               }}
             >
               <strong>Sign Up</strong>
+            </Button>
+          </Form.Item>
+          <Form.Item>
+            <Button
+              size="large"
+              onClick={handleGoogleSignIn}
+              style={signUpWithGoogleButtonStyle}
+            >
+              <strong>Sign up with Google</strong>
+              <FcGoogle style={{ fontSize: 24 }} />
             </Button>
           </Form.Item>
         </Form>

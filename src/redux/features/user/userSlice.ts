@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { auth } from "../../../lib/firebase";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 interface IUser {
     user: {
@@ -41,6 +41,16 @@ export const loggedInUser = createAsyncThunk(
     }
 )
 
+export const signInWithGoogle = createAsyncThunk(
+    'user/signInWithGoogle',
+    async () => {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+        return result.user.email;
+    }
+  );
+  
+
 export const userSlice = createSlice({
     name: "user",
     initialState,
@@ -79,6 +89,21 @@ export const userSlice = createSlice({
             state.isLoading = false;
             state.isError = true;
             state.error = action.error.message!;
+          })
+          .addCase(signInWithGoogle.pending, (state) => {
+            state.isLoading = true;
+            state.isError = false;
+            state.error = null;
+          })
+          .addCase(signInWithGoogle.fulfilled, (state, action) => {
+            state.isLoading = false;
+            state.isError = false;
+            state.user.email = action.payload;
+          })
+          .addCase(signInWithGoogle.rejected, (state, action) => {
+            state.isLoading = false;
+            state.isError = true;
+            state.error = action.type;
           });
     },
 })
