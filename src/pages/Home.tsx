@@ -61,77 +61,80 @@ export default function Home() {
         Latest Books
       </Title>
       <Row gutter={16}>
-        {bookData?.map((book) => (
-          <Col span={6} key={book._id}>
-            <Card
-              style={{
-                height: 400,
-                margin: "16px",
-              }}
-              hoverable
-              cover={
-                isLoading ? (
-                  <Skeleton.Image
-                    active
-                    style={{ width: "100%", height: "200px" }}
-                  />
-                ) : (
-                  <Image
-                    src={`/images/${book.image}`}
-                    alt={book.title}
-                    height={200}
-                  />
-                )
-              }
-            >
-              <Link to={`/book/${book._id}`}>
-                <Skeleton loading={isLoading} avatar active>
-                  <Card.Meta
-                    title={book.title}
-                    description={
-                      <div style={{ marginTop: "20px" }}>
-                        <div style={{ marginBottom: "10px" }}>
-                          <Space align="baseline">
-                            <UserOutlined
-                              style={{ fontSize: "18px", color: "blue" }}
-                            />
-                            <Text>
-                              <strong>Author:</strong> {book.author}
-                            </Text>
-                          </Space>
-                        </div>
-                        <div style={{ marginBottom: "10px" }}>
-                          <Space align="baseline">
-                            <BookOutlined
-                              style={{ fontSize: "18px", color: "green" }}
-                            />
-                            <Text>
-                              <strong>Genre:</strong> {book.genre}
-                            </Text>
-                          </Space>
-                        </div>
-                        <div style={{ marginBottom: "10px" }}>
-                          <Space align="baseline">
-                            <CalendarOutlined
-                              style={{ fontSize: "18px", color: "red" }}
-                            />
-                            <Text>
-                              <strong>Publication Date:</strong>{" "}
-                              {format(
-                                new Date(book.publicationDate),
-                                "dd MMM, yyyy"
-                              )}
-                            </Text>
-                          </Space>
-                        </div>
-                      </div>
-                    }
-                  />
-                </Skeleton>
-              </Link>
-            </Card>
-          </Col>
-        ))}
+        {bookData?.map(
+          (book) =>
+            book.approved !== false && (
+              <Col span={6} key={book._id}>
+                <Card
+                  style={{
+                    height: 400,
+                    margin: "16px",
+                  }}
+                  hoverable
+                  cover={
+                    isLoading ? (
+                      <Skeleton.Image
+                        active
+                        style={{ width: "100%", height: "200px" }}
+                      />
+                    ) : (
+                      <Image
+                        src={`/images/${book.image}`}
+                        alt={book.title}
+                        height={200}
+                      />
+                    )
+                  }
+                >
+                  <Link to={`/book/${book._id}`}>
+                    <Skeleton loading={isLoading} avatar active>
+                      <Card.Meta
+                        title={book.title}
+                        description={
+                          <div style={{ marginTop: "20px" }}>
+                            <div style={{ marginBottom: "10px" }}>
+                              <Space align="baseline">
+                                <UserOutlined
+                                  style={{ fontSize: "18px", color: "blue" }}
+                                />
+                                <Text>
+                                  <strong>Author:</strong> {book.author}
+                                </Text>
+                              </Space>
+                            </div>
+                            <div style={{ marginBottom: "10px" }}>
+                              <Space align="baseline">
+                                <BookOutlined
+                                  style={{ fontSize: "18px", color: "green" }}
+                                />
+                                <Text>
+                                  <strong>Genre:</strong> {book.genre}
+                                </Text>
+                              </Space>
+                            </div>
+                            <div style={{ marginBottom: "10px" }}>
+                              <Space align="baseline">
+                                <CalendarOutlined
+                                  style={{ fontSize: "18px", color: "red" }}
+                                />
+                                <Text>
+                                  <strong>Publication Date:</strong>{" "}
+                                  {format(
+                                    new Date(book.publicationDate),
+                                    "dd MMM, yyyy"
+                                  )}
+                                </Text>
+                              </Space>
+                            </div>
+                          </div>
+                        }
+                      />
+                    </Skeleton>
+                  </Link>
+                </Card>
+              </Col>
+            )
+        )}
       </Row>
       <Link
         to="/all-books"

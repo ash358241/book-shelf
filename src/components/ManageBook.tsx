@@ -4,7 +4,7 @@ import {
   useGetBooksQuery,
 } from "../redux/features/books/bookAPI";
 import { List, Button, Space } from "antd";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 
@@ -19,6 +19,7 @@ interface IBook {
   title: string;
   author: string;
   userEmail: string;
+  approved: boolean;
 }
 
 export default function ManageBook({ user }: IUser) {
@@ -53,31 +54,62 @@ export default function ManageBook({ user }: IUser) {
       <List
         itemLayout="horizontal"
         dataSource={bookList}
-        renderItem={(book: IBook) => (
-          <List.Item>
-            <List.Item.Meta
-              title={book.title}
-              description={`Author: ${book.author}`}
-            />
-            <Space>
-              <Tooltip
-                title={
-                  book.userEmail !== user?.email && !isAdmin
-                    ? "You can only update your own books"
-                    : "Update Book"
-                }
-              >
-                <Link to={`/editBook/${book._id}`}>
+        renderItem={(book: IBook) =>
+          (isAdmin || book.approved === true) && (
+            <List.Item>
+              <List.Item.Meta
+                title={book.title}
+                description={`Author: ${book.author}`}
+              />
+              <Space>
+                <Tooltip
+                  title={
+                    book.userEmail !== user?.email && !isAdmin
+                      ? "You can only update your own books"
+                      : "Update Book"
+                  }
+                >
+                  <Link to={`/editBook/${book._id}`}>
+                    <Button
+                      type="link"
+                      disabled={book.userEmail !== user?.email && !isAdmin}
+                      icon={
+                        <EditOutlined
+                          style={{
+                            fontSize: "18px",
+                            color:
+                              book.userEmail === user?.email || isAdmin
+                                ? "green"
+                                : "gray",
+                            pointerEvents:
+                              book.userEmail === user?.email || isAdmin
+                                ? "none"
+                                : "auto",
+                          }}
+                        />
+                      }
+                    />
+                  </Link>
+                </Tooltip>
+              </Space>
+              <Space>
+                <Tooltip
+                  title={
+                    book.userEmail !== user?.email && !isAdmin
+                      ? "You can only delete your own books"
+                      : "Delete Book"
+                  }
+                >
                   <Button
                     type="link"
                     disabled={book.userEmail !== user?.email && !isAdmin}
                     icon={
-                      <EditOutlined
+                      <DeleteOutlined
                         style={{
                           fontSize: "18px",
                           color:
                             book.userEmail === user?.email || isAdmin
-                              ? "blue"
+                              ? "red"
                               : "gray",
                           pointerEvents:
                             book.userEmail === user?.email || isAdmin
@@ -86,42 +118,32 @@ export default function ManageBook({ user }: IUser) {
                         }}
                       />
                     }
+                    onClick={() => handleDeleteBook(book._id)}
                   />
-                </Link>
-              </Tooltip>
-            </Space>
-            <Space>
-              <Tooltip
-                title={
-                  book.userEmail !== user?.email && !isAdmin
-                    ? "You can only delete your own books"
-                    : "Delete Book"
-                }
-              >
-                <Button
-                  type="link"
-                  disabled={book.userEmail !== user?.email && !isAdmin}
-                  icon={
-                    <DeleteOutlined
-                      style={{
-                        fontSize: "18px",
-                        color:
-                          book.userEmail === user?.email || isAdmin
-                            ? "red"
-                            : "gray",
-                        pointerEvents:
-                          book.userEmail === user?.email || isAdmin
-                            ? "none"
-                            : "auto",
-                      }}
-                    />
-                  }
-                  onClick={() => handleDeleteBook(book._id)}
-                />
-              </Tooltip>
-            </Space>
-          </List.Item>
-        )}
+                </Tooltip>
+              </Space>
+              {isAdmin && (
+                <Space>
+                  <Tooltip title="Preview">
+                    <Link to={`/book/${book._id}`}>
+                      <Button
+                        type="link"
+                        icon={
+                          <EyeOutlined
+                            style={{
+                              fontSize: "18px",
+                              color: "blue",
+                            }}
+                          />
+                        }
+                      />
+                    </Link>
+                  </Tooltip>
+                </Space>
+              )}
+            </List.Item>
+          )
+        }
       />
     </div>
   );
